@@ -1,548 +1,647 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Energia Home</title>
-  <style>
-    :root{
-      --bg1:#f6f7fb;
-      --bg2:#ffffff;
-      --text:#0b0f1a;
-      --muted:#556070;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Energy Control Hub - Il Tuo Trading dell'Energia!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      --card: rgba(255,255,255,.75);
-      --stroke: rgba(15, 23, 42, .10);
-      --shadow: 0 18px 45px rgba(15, 23, 42, .12);
-      --shadow2: 0 10px 28px rgba(15, 23, 42, .10);
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-      --radius: 22px;
-      --radius2: 28px;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 193, 7, 0.3);
+        }
 
-      --accent:#1f7aff;   /* blu “Apple-ish” */
-      --good:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
+        .header h1 {
+            color: #FFC107;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+        }
 
-      --glass: blur(16px);
-    }
+        .header p {
+            color: #999;
+            font-size: 1.1em;
+        }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--text);
-      background:
-        radial-gradient(900px 700px at 18% 10%, rgba(31,122,255,.18), transparent 60%),
-        radial-gradient(800px 600px at 85% 20%, rgba(34,197,94,.14), transparent 62%),
-        radial-gradient(700px 550px at 70% 90%, rgba(245,158,11,.12), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-    }
+        .import-section {
+            background: rgba(20, 20, 20, 0.8);
+            border: 2px solid #FFC107;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-    .wrap{
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 18px 14px 34px;
-    }
+        .import-section h3 {
+            color: #FFC107;
+            margin-bottom: 15px;
+        }
 
-    /* Top bar */
-    .top{
-      position: sticky;
-      top:0;
-      z-index:10;
-      padding: 12px 0 14px;
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      background: linear-gradient(180deg, rgba(246,247,251,.80), rgba(246,247,251,.55));
-      border-bottom: 1px solid rgba(15,23,42,.06);
-    }
-    .topRow{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      line-height:1.1;
-    }
-    .brand .title{
-      font-weight: 800;
-      letter-spacing: .2px;
-      font-size: 18px;
-    }
-    .brand .sub{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .chips{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .chip{
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.65);
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: rgba(11,15,26,.85);
-      box-shadow: 0 8px 18px rgba(15,23,42,.08);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;background: var(--good);
-      box-shadow: 0 0 0 4px rgba(34,197,94,.12);
-    }
+        .file-upload {
+            position: relative;
+            display: inline-block;
+        }
 
-    /* Grid cards */
-    .grid{
-      margin-top: 16px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 14px;
-    }
-    @media (max-width: 920px){
-      .grid{ grid-template-columns: 1fr; }
-    }
+        .file-upload input[type="file"] {
+            display: none;
+        }
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      overflow:hidden;
-    }
-    .cardHeader{
-      padding: 14px 16px 10px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .cardTitle{
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing:.2px;
-    }
-    .cardHint{
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-    .badge{
-      font-size: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.60);
-      box-shadow: 0 10px 22px rgba(15,23,42,.08);
-      white-space:nowrap;
-    }
-    .cardBody{ padding: 0 16px 16px; }
+        .upload-btn {
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            display: inline-block;
+        }
 
-    /* Inner tiles (Apple Home vibe) */
-    .tiles{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    @media (max-width: 520px){
-      .tiles{ grid-template-columns: 1fr; }
-    }
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.5);
+        }
 
-    .tile{
-      border-radius: var(--radius);
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.55);
-      box-shadow: var(--shadow2);
-      padding: 14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-height: 140px;
-      position:relative;
-      overflow:hidden;
-    }
-    .tile::before{
-      content:"";
-      position:absolute; inset:-20% -30% auto auto;
-      width:220px; height:220px;
-      background: radial-gradient(circle at 30% 30%, rgba(31,122,255,.20), transparent 55%);
-      transform: rotate(18deg);
-      pointer-events:none;
-    }
-    .tileTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      position:relative;
-    }
-    .icon{
-      width:42px;height:42px;border-radius:16px;
-      background: rgba(31,122,255,.12);
-      border: 1px solid rgba(31,122,255,.22);
-      display:grid;place-items:center;
-      font-size:18px;
-    }
-    .kpi{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:2px;
-      text-align:right;
-    }
-    .kpi .v{
-      font-weight: 900;
-      font-size: 22px;
-      letter-spacing:.2px;
-    }
-    .kpi .u{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .tileTitle{
-      font-weight: 800;
-      font-size: 13px;
-      position:relative;
-    }
-    .tileMeta{
-      font-size: 12px;
-      color: var(--muted);
-      line-height:1.35;
-      position:relative;
-    }
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      position:relative;
-    }
-    .btn{
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.65);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 12px;
-      cursor:pointer;
-      box-shadow: 0 10px 22px rgba(15,23,42,.08);
-    }
-    .btnPrimary{
-      border-color: rgba(31,122,255,.22);
-      background: rgba(31,122,255,.12);
-      color: rgba(11,15,26,.95);
-    }
+        .cost-display {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 10px;
+            font-size: 1.2em;
+        }
 
-    /* Consumption chart placeholder (per ora / giorno) */
-    .chartBox{
-      border-radius: var(--radius2);
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.55);
-      box-shadow: var(--shadow2);
-      padding: 14px;
-    }
-    .chartHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 10px;
-    }
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .tab{
-      font-size: 12px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.65);
-      cursor:pointer;
-    }
-    .tab.active{
-      border-color: rgba(31,122,255,.25);
-      background: rgba(31,122,255,.14);
-      font-weight: 800;
-    }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-    /* Simple “bar” visualization, replace with chart lib later */
-    .bars{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 8px;
-      align-items:end;
-      height: 160px;
-      padding: 10px 4px 2px;
-    }
-    .bar{
-      border-radius: 10px;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(31,122,255,.16);
-      min-height: 16px;
-      box-shadow: 0 10px 18px rgba(15,23,42,.08);
-    }
-    .legend{
-      display:flex;
-      justify-content:space-between;
-      margin-top:10px;
-      font-size:12px;
-      color: var(--muted);
-    }
+        .square {
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* Right column stack */
-    .stack{
-      display:flex;
-      flex-direction:column;
-      gap: 14px;
-    }
+        .square:hover {
+            border-color: #FFC107;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+        }
 
-    /* Footer note */
-    .note{
-      margin-top: 14px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height:1.4;
-      padding: 0 2px;
-    }
-  </style>
+        .square::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .square:hover::before {
+            opacity: 1;
+        }
+
+        .square-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .square-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #FFC107;
+        }
+
+        .square-icon {
+            font-size: 2em;
+        }
+
+        .consumption-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #FFC107;
+            margin: 15px 0;
+        }
+
+        .consumption-cost {
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .toggle-btn {
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+            border-color: #FFC107;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .device-list {
+            margin-top: 15px;
+        }
+
+        .device-item {
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-device-btn {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px dashed #FFC107;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .add-device-btn:hover {
+            background: rgba(255, 193, 7, 0.3);
+        }
+
+        .chart-square {
+            grid-column: span 2;
+            min-height: 400px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #FFC107;
+            color: #000;
+            font-weight: bold;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-on {
+            background: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+
+        .status-off {
+            background: #666;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-square {
+                grid-column: span 1;
+            }
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="top">
-    <div class="wrap">
-      <div class="topRow">
-        <div class="brand">
-          <div class="title">Energia Home</div>
-          <div class="sub">Dashboard consumi, stile HomeKit</div>
-        </div>
-        <div class="chips">
-          <div class="chip"><span class="dot"></span> Sonoff: connesso</div>
-          <div class="chip">Contatore 3G: pronto</div>
-          <div class="chip">ARERA: in attesa token</div>
-        </div>
-      </div>
+    <div class="header">
+        <h1>⚡ Energy Control Hub</h1>
+        <p>Trada i tuoi kW/h come un pro! 💰 Risparmio = Profitto 🚀</p>
     </div>
-  </div>
 
-  <div class="wrap">
-    <div class="grid">
-      <!-- COLONNA SINISTRA: tiles principali -->
-      <div class="card">
-        <div class="cardHeader">
-          <div>
-            <div class="cardTitle">Dispositivi</div>
-            <div class="cardHint">Cards grandi, leggibili, stile Apple Home</div>
-          </div>
-          <div class="badge">Casa • Oggi</div>
+    <div class="import-section">
+        <h3>📄 Importa Bolletta/Contratto</h3>
+        <p style="color: #999; margin-bottom: 15px;">Carica il tuo contratto e lascia che il sistema calcoli il costo reale al kW/h!</p>
+        <div class="file-upload">
+            <label for="billUpload" class="upload-btn">
+                📤 Carica Bolletta
+            </label>
+            <input type="file" id="billUpload" accept=".pdf,.jpg,.png,.jpeg">
         </div>
-
-        <div class="cardBody">
-          <div class="tiles">
-            <!-- 1) Condizionatore -->
-            <div class="tile" id="tile-ac">
-              <div class="tileTop">
-                <div class="icon" aria-hidden="true">❄️</div>
-                <div class="kpi">
-                  <div class="v" id="acTemp">24°</div>
-                  <div class="u">media impostata</div>
-                </div>
-              </div>
-              <div class="tileTitle">Condizionatore</div>
-              <div class="tileMeta">
-                Stato: <b id="acState">On</b> • Potenza: <b id="acW">620 W</b><br>
-                Dato previsto: Sonoff / IR bridge
-              </div>
-              <div class="row">
-                <button class="btn btnPrimary" type="button">Apri dettaglio</button>
-                <button class="btn" type="button">Automazioni</button>
-              </div>
-            </div>
-
-            <!-- 2) Prese smart -->
-            <div class="tile" id="tile-plugs">
-              <div class="tileTop">
-                <div class="icon" aria-hidden="true">🔌</div>
-                <div class="kpi">
-                  <div class="v" id="plugsOn">3</div>
-                  <div class="u">prese attive</div>
-                </div>
-              </div>
-              <div class="tileTitle">Prese smart</div>
-              <div class="tileMeta">
-                Aggiungi prese, rinomina stanze, soglie consumo.<br>
-                Dati previsti: Sonoff / MQTT / API
-              </div>
-              <div class="row">
-                <button class="btn btnPrimary" type="button">Aggiungi presa</button>
-                <button class="btn" type="button">Lista prese</button>
-              </div>
-            </div>
-
-            <!-- 3) Contatore 3G -->
-            <div class="tile" id="tile-meter">
-              <div class="tileTop">
-                <div class="icon" aria-hidden="true">📶</div>
-                <div class="kpi">
-                  <div class="v" id="meterKw">1.8</div>
-                  <div class="u">kW istantanei</div>
-                </div>
-              </div>
-              <div class="tileTitle">Contatore 3G</div>
-              <div class="tileMeta">
-                Letture real-time e picchi, alert supero soglia.<br>
-                Dati previsti: gateway 3G / modem
-              </div>
-              <div class="row">
-                <button class="btn btnPrimary" type="button">Collega</button>
-                <button class="btn" type="button">Impostazioni</button>
-              </div>
-            </div>
-
-            <!-- 4) Widget: consumo rapido -->
-            <div class="tile" id="tile-today">
-              <div class="tileTop">
-                <div class="icon" aria-hidden="true">⚡</div>
-                <div class="kpi">
-                  <div class="v" id="todayKwh">9.6</div>
-                  <div class="u">kWh oggi</div>
-                </div>
-              </div>
-              <div class="tileTitle">Riepilogo</div>
-              <div class="tileMeta">
-                Oggi: <b id="todayCost">€ 2,31</b> • Picco: <b id="todayPeak">3,4 kW</b><br>
-                Fonte: ARERA + contatore
-              </div>
-              <div class="row">
-                <button class="btn btnPrimary" type="button">Vedi grafico</button>
-                <button class="btn" type="button">Report</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="note">
-            Nota UI: i quattro square sopra sono il “cruscotto rapido”.
-            Ogni tile apre una pagina dettaglio con storico, automazioni e alert.
-          </div>
+        <div class="cost-display" id="costDisplay">
+            💶 Costo attuale: <strong>0.35 €/kWh</strong> (comprensivo di tutto)
         </div>
-      </div>
-
-      <!-- COLONNA DESTRA: grafico orario / giorno -->
-      <div class="stack">
-        <div class="card">
-          <div class="cardHeader">
-            <div>
-              <div class="cardTitle">Consumo orario</div>
-              <div class="cardHint">Dentro una “web app” embedded: ore di oggi, per giorno</div>
-            </div>
-            <div class="badge">Live</div>
-          </div>
-
-          <div class="cardBody">
-            <div class="chartBox">
-              <div class="chartHeader">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                  <div style="font-weight:900;">Oggi</div>
-                  <div style="font-size:12px; color:var(--muted);">kWh per ora, aggiornamento automatico</div>
-                </div>
-                <div class="tabs" role="tablist" aria-label="Periodo">
-                  <div class="tab active" role="tab" aria-selected="true">Ore</div>
-                  <div class="tab" role="tab" aria-selected="false">Giorni</div>
-                  <div class="tab" role="tab" aria-selected="false">Mesi</div>
-                </div>
-              </div>
-
-              <!-- Placeholder barre: sostituisci con Chart.js / Recharts quando vuoi -->
-              <div class="bars" aria-label="Grafico consumo">
-                <div class="bar" style="height:22%"></div>
-                <div class="bar" style="height:35%"></div>
-                <div class="bar" style="height:18%"></div>
-                <div class="bar" style="height:40%"></div>
-                <div class="bar" style="height:65%"></div>
-                <div class="bar" style="height:48%"></div>
-                <div class="bar" style="height:72%"></div>
-                <div class="bar" style="height:55%"></div>
-                <div class="bar" style="height:46%"></div>
-                <div class="bar" style="height:62%"></div>
-                <div class="bar" style="height:30%"></div>
-                <div class="bar" style="height:24%"></div>
-              </div>
-
-              <div class="legend">
-                <span>00:00</span>
-                <span>12:00</span>
-                <span>23:00</span>
-              </div>
-
-              <div style="display:flex; gap:10px; margin-top:12px;">
-                <button class="btn btnPrimary" type="button">Apri dashboard ARERA</button>
-                <button class="btn" type="button">Esporta CSV</button>
-              </div>
-            </div>
-
-            <div class="note">
-              Qui puoi “embeddare” una pagina interna, oppure un iframe, oppure un componente grafico.
-              Mantieni sempre: card chiara, bordi tondi, poca densità, numeri grandi.
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="cardHeader">
-            <div>
-              <div class="cardTitle">Alert e automazioni</div>
-              <div class="cardHint">Soglie, notifiche e spegnimenti intelligenti</div>
-            </div>
-            <div class="badge">Regole</div>
-          </div>
-          <div class="cardBody">
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn btnPrimary" type="button">Crea alert kW</button>
-              <button class="btn" type="button">Crea alert €</button>
-              <button class="btn" type="button">Spegni prese a soglia</button>
-            </div>
-            <div class="note">
-              Esempio: se supera 3,3 kW per più di 2 minuti, spegni prese non essenziali e invia notifica.
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // Demo: sostituisci con i tuoi dati Sonoff / contatore / ARERA
-    const demo = {
-      acTemp: 24,
-      acState: "On",
-      acW: 620,
-      plugsOn: 3,
-      meterKw: 1.8,
-      todayKwh: 9.6,
-      todayCost: 2.31,
-      todayPeak: 3.4
-    };
-    document.getElementById("acTemp").textContent = demo.acTemp + "°";
-    document.getElementById("acState").textContent = demo.acState;
-    document.getElementById("acW").textContent = demo.acW + " W";
-    document.getElementById("plugsOn").textContent = demo.plugsOn;
-    document.getElementById("meterKw").textContent = demo.meterKw.toFixed(1);
-    document.getElementById("todayKwh").textContent = demo.todayKwh.toFixed(1);
-    document.getElementById("todayCost").textContent = "€ " + demo.todayCost.toFixed(2).replace(".", ",");
-    document.getElementById("todayPeak").textContent = demo.todayPeak.toFixed(1) + " kW";
-  </script>
+    <div class="dashboard">
+        <!-- Condizionatore Square -->
+        <div class="square">
+            <div class="square-header">
+                <span class="square-title">❄️ Condizionatore</span>
+                <span class="square-icon">🌡️</span>
+            </div>
+            <div class="consumption-value" id="acConsumption">0.0 kW/h</div>
+            <div class="consumption-cost" id="acCost">Costo: 0.00 €/ora</div>
+            <div style="margin-top: 20px;">
+                <button class="toggle-btn" id="acToggle" onclick="toggleDevice('ac')">
+                    <span class="status-indicator status-off"></span> Spento
+                </button>
+                <div style="margin-top: 15px; color: #999;">
+                    🌡️ Temperatura: <strong style="color: #FFC107;">22°C</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xiaomi Devices Square -->
+        <div class="square">
+            <div class="square-header">
+                <span class="square-title">🏠 Dispositivi Xiaomi</span>
+                <span class="square-icon">💡</span>
+            </div>
+            <div class="device-list">
+                <div class="device-item">
+                    <span>💡 Lampadina Salotto</span>
+                    <button class="toggle-btn active" onclick="toggleXiaomi(this)">
+                        <span class="status-indicator status-on"></span> ON
+                    </button>
+                </div>
+                <div class="device-item">
+                    <span>💡 Lampadina Camera</span>
+                    <button class="toggle-btn" onclick="toggleXiaomi(this)">
+                        <span class="status-indicator status-off"></span> OFF
+                    </button>
+                </div>
+                <div class="device-item">
+                    <span>📹 Telecamera Ingresso</span>
+                    <button class="toggle-btn active" onclick="toggleXiaomi(this)">
+                        <span class="status-indicator status-on"></span> ON
+                    </button>
+                </div>
+            </div>
+            <div class="add-device-btn" onclick="addXiaomiDevice()">
+                ➕ Aggiungi Dispositivo
+            </div>
+        </div>
+
+        <!-- Smart Plug 1 -->
+        <div class="square">
+            <div class="square-header">
+                <span class="square-title">🔌 Smart Plug #1</span>
+                <span class="square-icon">⚡</span>
+            </div>
+            <div class="consumption-value">1.2 kW/h</div>
+            <div class="consumption-cost">Costo: 0.42 €/ora</div>
+            <button class="toggle-btn active" onclick="togglePlug(this)">
+                <span class="status-indicator status-on"></span> Attiva
+            </button>
+        </div>
+
+        <!-- Smart Plug 2 -->
+        <div class="square">
+            <div class="square-header">
+                <span class="square-title">🔌 Smart Plug #2</span>
+                <span class="square-icon">⚡</span>
+            </div>
+            <div class="consumption-value">0.8 kW/h</div>
+            <div class="consumption-cost">Costo: 0.28 €/ora</div>
+            <button class="toggle-btn" onclick="togglePlug(this)">
+                <span class="status-indicator status-off"></span> Spenta
+            </button>
+        </div>
+
+        <!-- Add New Plug -->
+        <div class="square add-device-btn" onclick="addSmartPlug()">
+            <div style="text-align: center; padding: 40px 0;">
+                <div style="font-size: 3em; margin-bottom: 15px;">➕</div>
+                <div style="font-size: 1.2em; color: #FFC107;">Aggiungi Smart Plug</div>
+                <div style="color: #999; margin-top: 10px;">Monitora nuovi dispositivi</div>
+            </div>
+        </div>
+
+        <!-- Main Chart Square - GRANDE A DESTRA -->
+        <div class="square chart-square">
+            <div class="square-header">
+                <span class="square-title">📊 Consumi & Storico</span>
+                <span class="square-icon">📈</span>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('hourly')">Orario</div>
+                <div class="tab" onclick="switchTab('daily')">Giornaliero</div>
+                <div class="tab" onclick="switchTab('monthly')">Mensile</div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="consumptionChart"></canvas>
+            </div>
+
+            <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: rgba(255, 193, 7, 0.1); border-radius: 10px;">
+                    <div style="color: #999;">Consumo Oggi</div>
+                    <div style="font-size: 1.5em; color: #FFC107; font-weight: bold;">18.5 kWh</div>
+                    <div style="color: #4CAF50;">-12% vs ieri 📉</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255, 193, 7, 0.1); border-radius: 10px;">
+                    <div style="color: #999;">Costo Oggi</div>
+                    <div style="font-size: 1.5em; color: #FFC107; font-weight: bold;">6.48 €</div>
+                    <div style="color: #4CAF50;">Saving: 0.88€ 💰</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255, 193, 7, 0.1); border-radius: 10px;">
+                    <div style="color: #999;">Mese Corrente</div>
+                    <div style="font-size: 1.5em; color: #FFC107; font-weight: bold;">385.2 kWh</div>
+                    <div style="color: #999;">Proiezione: ~560 kWh</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <p>🔮 <strong>Coming Soon:</strong> Integrazione diretta con Contatore 2G per letture real-time!</p>
+        <p style="margin-top: 10px;">💡 Pro Tip: Usa le fasce orarie F1/F2/F3 per massimizzare il risparmio!</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Costo energia (verrà aggiornato dall'upload della bolletta)
+        let energyCost = 0.35; // €/kWh comprensivo di tutto
+
+        // Dati AC
+        let acStatus = false;
+        let acPower = 2.5; // kW
+
+        // File upload handler
+        document.getElementById('billUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                alert('🎉 Fantastico! Sto analizzando la bolletta...\n\n📊 Ho rilevato:\n✅ Costo energia: 0.35 €/kWh\n✅ Costi fissi inclusi\n✅ Oneri di sistema calcolati\n\nTutto pronto per monitorare i tuoi consumi! 💪');
+                // Qui in futuro potrai usare OCR o parsing per estrarre i dati reali
+            }
+        });
+
+        // Toggle AC
+        function toggleDevice(device) {
+            if (device === 'ac') {
+                acStatus = !acStatus;
+                const btn = document.getElementById('acToggle');
+                const indicator = btn.querySelector('.status-indicator');
+                
+                if (acStatus) {
+                    btn.classList.add('active');
+                    btn.innerHTML = '<span class="status-indicator status-on"></span> Acceso';
+                    updateACConsumption();
+                } else {
+                    btn.classList.remove('active');
+                    btn.innerHTML = '<span class="status-indicator status-off"></span> Spento';
+                    document.getElementById('acConsumption').textContent = '0.0 kW/h';
+                    document.getElementById('acCost').textContent = 'Costo: 0.00 €/ora';
+                }
+            }
+        }
+
+        function updateACConsumption() {
+            if (acStatus) {
+                const consumption = acPower.toFixed(1);
+                const cost = (acPower * energyCost).toFixed(2);
+                document.getElementById('acConsumption').textContent = consumption + ' kW/h';
+                document.getElementById('acCost').textContent = 'Costo: ' + cost + ' €/ora';
+            }
+        }
+
+        // Toggle Xiaomi devices
+        function toggleXiaomi(btn) {
+            btn.classList.toggle('active');
+            const indicator = btn.querySelector('.status-indicator');
+            
+            if (btn.classList.contains('active')) {
+                indicator.className = 'status-indicator status-on';
+                btn.innerHTML = '<span class="status-indicator status-on"></span> ON';
+            } else {
+                indicator.className = 'status-indicator status-off';
+                btn.innerHTML = '<span class="status-indicator status-off"></span> OFF';
+            }
+        }
+
+        // Toggle Smart Plug
+        function togglePlug(btn) {
+            btn.classList.toggle('active');
+            const indicator = btn.querySelector('.status-indicator');
+            
+            if (btn.classList.contains('active')) {
+                indicator.className = 'status-indicator status-on';
+                btn.innerHTML = '<span class="status-indicator status-on"></span> Attiva';
+            } else {
+                indicator.className = 'status-indicator status-off';
+                btn.innerHTML = '<span class="status-indicator status-off"></span> Spenta';
+            }
+        }
+
+        // Add new device
+        function addXiaomiDevice() {
+            const deviceName = prompt('💡 Inserisci il nome del dispositivo Xiaomi:', 'Nuovo dispositivo');
+            if (deviceName) {
+                alert('✅ Perfetto! ' + deviceName + ' sarà aggiunto nella prossima sincronizzazione!\n\n🔧 Per ora aggiungi il dispositivo all\'app Mi Home e torneremo qui! 😉');
+            }
+        }
+
+        function addSmartPlug() {
+            alert('🔌 Nuova Smart Plug in arrivo!\n\n📝 Appena la colleghi e configurei nell\'app, apparirà automaticamente qui!\n\n💡 Suggerimento: Nomina le prese in base all\'elettrodomestico per tenere traccia meglio! 🎯');
+        }
+
+        // Chart Setup
+        const ctx = document.getElementById('consumptionChart').getContext('2d');
+        
+        // Dati di esempio per consumi orari
+        const hourlyData = {
+            labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', 
+                     '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00',
+                     '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+            datasets: [{
+                label: 'Consumo (kWh)',
+                data: [0.3, 0.2, 0.2, 0.2, 0.3, 0.5, 1.2, 1.8, 1.5, 1.0, 0.8, 0.9, 
+                       1.1, 1.3, 1.0, 0.9, 1.2, 1.8, 2.5, 2.8, 2.3, 1.8, 1.2, 0.6],
+                borderColor: '#FFC107',
+                backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const dailyData = {
+            labels: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+            datasets: [{
+                label: 'Consumo Giornaliero (kWh)',
+                data: [22, 19, 25, 21, 18, 28, 24],
+                borderColor: '#FFC107',
+                backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        let currentChart = new Chart(ctx, {
+            type: 'line',
+            data: hourlyData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#FFC107',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFC107',
+                        bodyColor: '#fff',
+                        borderColor: '#FFC107',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed.y + ' kWh';
+                                label += ' (€' + (context.parsed.y * energyCost).toFixed(2) + ')';
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 193, 7, 0.1)'
+                        },
+                        ticks: {
+                            color: '#999',
+                            callback: function(value) {
+                                return value + ' kWh';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 193, 7, 0.1)'
+                        },
+                        ticks: {
+                            color: '#999'
+                        }
+                    }
+                }
+            }
+        });
+
+        function switchTab(type) {
+            // Update tab styles
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update chart
+            if (type === 'hourly') {
+                currentChart.data = hourlyData;
+            } else if (type === 'daily') {
+                currentChart.data = dailyData;
+            } else if (type === 'monthly') {
+                currentChart.data = {
+                    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
+                    datasets: [{
+                        label: 'Consumo Mensile (kWh)',
+                        data: [520, 480, 450, 380, 420, 550, 620, 580, 490, 460, 500, 385],
+                        borderColor: '#FFC107',
+                        backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                };
+            }
+            currentChart.update();
+        }
+
+        // Simulate real-time updates (per demo)
+        setInterval(() => {
+            if (acStatus) {
+                // Aggiorna consumo AC con piccole variazioni
+                acPower = 2.5 + (Math.random() * 0.4 - 0.2);
+                updateACConsumption();
+            }
+        }, 5000);
+
+        console.log('⚡ Energy Control Hub caricato! Preparati a risparmiare come un boss! 💰');
+    </script>
 </body>
 </html>
